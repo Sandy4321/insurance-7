@@ -1,0 +1,32 @@
+{
+    "0": {
+        "input_size": 33,
+        "hidden_size": 256,
+        "lr": 1.0e-3,
+        "mf": 0.9,
+        "lambda": 1.0e-3,
+        "decay": 1.0e-5,
+        "params_path": "../data/params_0.pkl",
+        "iterations": 200000
+    },
+    "1": {
+        "input_size": 256,
+        "hidden_size": 512,
+        "lr": 1.0e-3,
+        "mf": 0.9,
+        "lambda": 1.0e-3,
+        "decay": 1.0e-5,
+        "params_path": "../data/params_1.pkl",
+        "iterations": 200000
+    },
+    "2": {
+        "input_size": 512,
+        "hidden_size": 512,
+        "lr": 1.0e-3,
+        "mf": 0.9,
+        "lambda": 1.0e-3,
+        "decay": 1.0e-5,
+        "params_path": "../data/params_2.pkl",
+        "iterations": 200000
+    }
+}

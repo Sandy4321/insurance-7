@@ -4,11 +4,12 @@ import theano
 import theano.tensor as T
 import time
 import os
+from munging.loaders import load_configuration, UnsupervisedLoader
 
 
 class Autoencoder(object):
     def __init__(self, input_size, hidden_size, hidden_activation=T.nnet.sigmoid, output_activation=lambda x: x,
-                 learning_rate=1.e-3, momentum_factor=0.9, iterations=100000, log_step=10, decay=0., params_path=None):
+                 learning_rate=1.e-3, momentum_factor=0.9, iterations=100000, log_step=100, decay=0., params_path=None):
         """
         Sparse autoencoder implementation - base class for all other shallow autoencoders.
         """
@@ -108,7 +109,7 @@ class ContractiveAutoencoder(Autoencoder):
 
 
 class StackedAutoencoders(object):
-    def __init__(self, config, mini_batch_size=128):
+    def __init__(self, config, mini_batch_size=128, warm_start=False, start_from=0):
         self.mini_batch_size = mini_batch_size
         self.caes = []
         for _, params in sorted(config.items()):
@@ -116,18 +117,37 @@ class StackedAutoencoders(object):
                                          learning_rate=params['lr'], momentum_factor=params['mf'],
                                          lambda_=params['lambda'], decay=params['decay'],
                                          iterations=params['iterations'], params_path=params['params_path'])
-            if os.path.exists(params['params_path']):
-                with open(params['params_path'], 'rb') as f:
-                    cae.params = cPickle.load(f)
+            if warm_start:
+                if os.path.exists(params['params_path']):
+                    with open(params['params_path'], 'rb') as f:
+                        cae.params = cPickle.load(f)
             self.caes.append(cae)
-        self.flags = [False] * (len(self.caes) - 1) + [True]
+        self.start_from = start_from
 
     def train(self, generator):
-        for i, (cae, flag) in enumerate(zip(self.caes, self.flags)):
+        for i, cae in enumerate(self.caes):
+            if not (i == self.start_from):
+                if i > 0:
+                    preprocessor = self.caes[i - 1]
+                    generator.update_data(preprocessor)
+                continue
             print "Training %d/%d autoencoders" % (i + 1, len(self.caes))
             preprocessor = None if i == 0 else self.caes[i - 1]
             cae = cae.train(
-                generator.generate(mini_batch_size=self.mini_batch_size, mapper=flag, preprocessor=preprocessor))
+                generator.generate(mini_batch_size=self.mini_batch_size, preprocessor=preprocessor))
             print "Dumping parameters..."
             with open(cae.params_path, 'w') as f:
                 cPickle.dump(cae.params, f)
+
+
+def train_stacked_aes():
+    mini_batch_size = 128
+    generator = UnsupervisedLoader('../data')
+    config = load_configuration('../config/caes.json')
+    scaes = StackedAutoencoders(config, mini_batch_size=mini_batch_size, warm_start=True, start_from=2)
+
+    scaes.train(generator)
+
+
+if __name__ == "__main__":
+    train_stacked_aes()
