@@ -52,6 +52,21 @@ class SupervisedLoader(object):
         return x, y
 
 
+class TestSetLoader(object):
+    @staticmethod
+    def load(data_path):
+        test = pd.read_csv(os.path.join(data_path, 'test.csv'))
+        ids = test['Id'].values
+        x = test.values
+        for i in xrange(x.shape[0]):
+            for j in xrange(x.shape[1]):
+                if type(x[i, j]) == str:
+                    x[i, j] = ord(x[i, j]) - ord('A')
+        x = x.astype(theano.config.floatX)
+        x /= x.max(axis=0)
+        return x, ids
+
+
 class ConfigHolder(dict):
     def __init__(self, init, name=None):
         name = name or self.__class__.__name__.lower()

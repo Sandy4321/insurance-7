@@ -4,7 +4,7 @@ import theano
 import theano.tensor as T
 import time
 import os
-from munging.loaders import load_configuration, UnsupervisedLoader
+from munging.loaders import load_configuration, UnsupervisedLoader, SupervisedLoader, TestSetLoader
 
 
 class Autoencoder(object):
@@ -139,6 +139,11 @@ class StackedAutoencoders(object):
             with open(cae.params_path, 'w') as f:
                 cPickle.dump(cae.params, f)
 
+    def get_features(self, x):
+        for cae in self.caes:
+            x = cae.tf_hidden(x)
+        return x
+
 
 def train_stacked_aes():
     mini_batch_size = 128
@@ -149,5 +154,23 @@ def train_stacked_aes():
     scaes.train(generator)
 
 
+def compute_features_from_aes_for_train_set():
+    train_x, train_y = SupervisedLoader.load('../data')
+    config = load_configuration('../config/caes.json')
+    scaes = StackedAutoencoders(config, warm_start=True)
+    train_x = scaes.get_features(train_x)
+    np.save('../data/features.npy', train_x)
+    np.save('../data/hazards.npy', train_y)
+
+
+def compute_features_from_aes_for_test_set():
+    test_x, ids = TestSetLoader.load('../data')
+    config = load_configuration('../config/caes.json')
+    scaes = StackedAutoencoders(config, warm_start=True)
+    test_x = scaes.get_features(test_x)
+    np.save('../data/test_x.npy', test_x)
+    np.save('../data/test_ids.npy', ids)
+
+
 if __name__ == "__main__":
-    train_stacked_aes()
+    compute_features_from_aes_for_test_set()
