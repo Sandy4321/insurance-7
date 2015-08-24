@@ -51,8 +51,10 @@ class SupervisedLoader(object):
             for j in xrange(x.shape[1]):
                 if type(x[i, j]) == str:
                     x[i, j] = ord(x[i, j]) - ord('A')
+        min_val = x.min(axis=0)
+        max_val = x.max(axis=0)
+        x = (x - min_val) / (max_val - min_val)
         x = x.astype(theano.config.floatX)
-        x /= x.max(axis=0)
         return x, y
 
 
