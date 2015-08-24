@@ -69,7 +69,6 @@ class TestSetLoader(object):
                 if type(x[i, j]) == str:
                     x[i, j] = ord(x[i, j]) - ord('A')
         x = x.astype(theano.config.floatX)
-        x /= x.max(axis=0)
         return x, ids
 
 
