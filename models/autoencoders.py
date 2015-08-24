@@ -147,7 +147,7 @@ class StackedAutoencoders(object):
 
 def train_stacked_aes():
     mini_batch_size = 128
-    generator = UnsupervisedLoader('../data')
+    generator = UnsupervisedLoader('../data', dump_parameters=True)
     config = load_configuration('../config/caes.json')
     scaes = StackedAutoencoders(config, mini_batch_size=mini_batch_size, warm_start=True, start_from=2)
 

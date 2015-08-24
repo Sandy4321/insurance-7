@@ -6,11 +6,11 @@ import itertools
 import json
 import theano
 from sklearn.preprocessing import StandardScaler
-import cPickle
+import pickle
 
 
 class UnsupervisedLoader(object):
-    def __init__(self, data_path):
+    def __init__(self, data_path, dump_parameters=False):
         train = pd.read_csv(os.path.join(data_path, 'train.csv'))
         test = pd.read_csv(os.path.join(data_path, 'test.csv'))
         columns = list(test.columns)
@@ -23,7 +23,12 @@ class UnsupervisedLoader(object):
                     self.data[i, j] = ord(self.data[i, j]) - ord('A')
         self.data = self.data.astype(theano.config.floatX)
         np.random.shuffle(self.data)
-        self.data /= self.data.max(axis=0)
+        min_val = self.data.min(axis=0)
+        max_val = self.data.max(axis=0)
+        self.data = (self.data - min_val) / (max_val - min_val)
+        if dump_parameters:
+            with open(os.path.join(data_path, 'parameters.pkl'), 'wb') as f:
+                pickle.dump((max_val, min_val))
 
     def update_data(self, preprocessor):
         self.data = preprocessor.tf_hidden(self.data)
