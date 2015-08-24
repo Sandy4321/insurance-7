@@ -7,7 +7,7 @@
         "lambda": 1.0e-3,
         "decay": 1.0e-5,
         "params_path": "../data/params_0.pkl",
-        "iterations": 1000000
+        "iterations": 100
     },
     "1": {
         "input_size": 64,
@@ -17,7 +17,7 @@
         "lambda": 1.0e-3,
         "decay": 1.0e-5,
         "params_path": "../data/params_1.pkl",
-        "iterations": 1000000
+        "iterations": 100
     },
     "2": {
         "input_size": 128,
@@ -27,6 +27,6 @@
         "lambda": 1.0e-3,
         "decay": 1.0e-5,
         "params_path": "../data/params_2.pkl",
-        "iterations": 1000000
+        "iterations": 100
     }
 }

@@ -126,11 +126,9 @@ class StackedAutoencoders(object):
 
     def train(self, generator):
         for i, cae in enumerate(self.caes):
-            if not (i == self.start_from):
-                if i > 0:
-                    preprocessor = self.caes[i - 1]
-                    generator.update_data(preprocessor)
-                continue
+            if i > 0:
+                preprocessor = self.caes[i - 1]
+                generator.update_data(preprocessor)
             print "Training %d/%d autoencoders" % (i + 1, len(self.caes))
             preprocessor = None if i == 0 else self.caes[i - 1]
             cae = cae.train(
@@ -149,7 +147,7 @@ def train_stacked_aes():
     mini_batch_size = 128
     generator = UnsupervisedLoader('../data', dump_parameters=True)
     config = load_configuration('../config/caes.json')
-    scaes = StackedAutoencoders(config, mini_batch_size=mini_batch_size, warm_start=True, start_from=2)
+    scaes = StackedAutoencoders(config, mini_batch_size=mini_batch_size)
 
     scaes.train(generator)
 
