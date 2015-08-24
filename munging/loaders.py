@@ -33,8 +33,7 @@ class UnsupervisedLoader(object):
     def update_data(self, preprocessor):
         self.data = preprocessor.tf_hidden(self.data)
 
-    def generate(self, mini_batch_size=128, preprocessor=None):
-        self.data = preprocessor.tf_hidden(self.data) if preprocessor else self.data
+    def generate(self, mini_batch_size=128):
         for i in itertools.cycle(xrange(0, self.data.shape[0], mini_batch_size)):
             yield self.data[i: i + mini_batch_size, :], self.data[i: i + mini_batch_size, :]
 

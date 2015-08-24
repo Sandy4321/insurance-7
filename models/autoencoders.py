@@ -130,9 +130,8 @@ class StackedAutoencoders(object):
                 preprocessor = self.caes[i - 1]
                 generator.update_data(preprocessor)
             print "Training %d/%d autoencoders" % (i + 1, len(self.caes))
-            preprocessor = None if i == 0 else self.caes[i - 1]
             cae = cae.train(
-                generator.generate(mini_batch_size=self.mini_batch_size, preprocessor=preprocessor))
+                generator.generate(mini_batch_size=self.mini_batch_size))
             print "Dumping parameters..."
             with open(cae.params_path, 'w') as f:
                 cPickle.dump(cae.params, f)
