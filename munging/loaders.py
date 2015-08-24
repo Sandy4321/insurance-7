@@ -28,7 +28,7 @@ class UnsupervisedLoader(object):
         self.data = (self.data - min_val) / (max_val - min_val)
         if dump_parameters:
             with open(os.path.join(data_path, 'parameters.pkl'), 'wb') as f:
-                pickle.dump((max_val, min_val))
+                pickle.dump((max_val, min_val), f)
 
     def update_data(self, preprocessor):
         self.data = preprocessor.tf_hidden(self.data)
