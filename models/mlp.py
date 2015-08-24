@@ -30,10 +30,10 @@ def train_mlp():
     # model.add(Dropout(0.2))
     model.add(Dense(128, 128, weights=[w_2]))
     model.add(Dense(128, 1, init='glorot_uniform'))
-    model.add(Activation('linear'))
+    model.add(Activation('relu'))
 
     # sgd = SGD(lr=1.e-5, decay=1e-6, momentum=0.9, nesterov=True)
-    model.compile(loss='mean_squared_error', optimizer='rmsprop')
+    model.compile(loss='mean_squared_error', optimizer='adagrad')
 
     model.fit(train_x, train_y, nb_epoch=500, batch_size=128, validation_split=0.2)
 
@@ -66,5 +66,5 @@ def predict_with_mlp():
     generate_submission(ids, predicted, '../data/submission.csv')
 
 if __name__ == "__main__":
-    # train_mlp()
-    predict_with_mlp()
+    train_mlp()
+    # predict_with_mlp()
