@@ -173,4 +173,4 @@ def compute_features_from_aes_for_test_set():
 
 
 if __name__ == "__main__":
-    compute_features_from_aes_for_test_set()
+    train_stacked_aes()
